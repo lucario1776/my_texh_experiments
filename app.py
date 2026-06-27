@@ -251,17 +251,49 @@ def webhook():
     reply = resp.message()
 
     # ── SEND ────────────────────────────────────────
+    # if cmd == "SEND":
+    #     if from_num not in sessions:
+    #         reply.body("⚠️ No pending email. Send me a LinkedIn post first!")
+    #         return str(resp)
+    #     s = sessions[from_num]
+    #     try:
+    #         send_email(s["email"], s["subject"], s["body"], load_profile())
+    #         reply.body(f"✅ Email sent to {s['email']}!")
+    #         del sessions[from_num]
+    #     except Exception as e:
+    #         reply.body(f"❌ Send failed: {str(e)[:200]}\n\nCheck your email credentials in .env (EMAIL_PROVIDER, address & password).")
+    #     return str(resp)
+
+    # ── SEND ────────────────────────────────────────
     if cmd == "SEND":
         if from_num not in sessions:
             reply.body("⚠️ No pending email. Send me a LinkedIn post first!")
             return str(resp)
-        s = sessions[from_num]
-        try:
-            send_email(s["email"], s["subject"], s["body"], load_profile())
-            reply.body(f"✅ Email sent to {s['email']}!")
-            del sessions[from_num]
-        except Exception as e:
-            reply.body(f"❌ Send failed: {str(e)[:200]}\n\nCheck your email credentials in .env (EMAIL_PROVIDER, address & password).")
+            
+        # 1. Remove the draft from memory
+        s = sessions.pop(from_num)
+        
+        # 2. Tell Twilio immediately that we are working on it
+        reply.body("🚀 Logging into Outlook and sending your email...")
+        
+        # 3. Define the background task
+        def background_send(target_email, subject, body, profile_data, phone):
+            try:
+                # This is the slow part! We run it in this background thread.
+                send_email(target_email, subject, body, profile_data)
+                # Once finished, ping WhatsApp with the success message
+                send_wa(phone, f"✅ Email successfully sent to {target_email}!")
+            except Exception as e:
+                send_wa(phone, f"❌ Outlook Error: {str(e)[:200]}")
+
+        # 4. Launch the background task (DO NOT use thread.join())
+        threading.Thread(
+            target=background_send, 
+            args=(s["email"], s["subject"], s["body"], load_profile(), from_num), 
+            daemon=True
+        ).start()
+        
+        # 5. Instantly return 200 to Twilio so we don't get an HTTP 499
         return str(resp)
 
     # ── CANCEL ──────────────────────────────────────
