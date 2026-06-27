@@ -1,0 +1,20 @@
+{
+  "name": "Sumit Bhosale",
+  "current_role": "Data Engineer",
+  "years_experience": 5,
+  "skills": [
+    "Python",
+    "SQL",
+    "Apache Spark",
+    "Apache Airflow",
+    "dbt",
+    "AWS (S3, Glue, Redshift)",
+    "GCP (BigQuery, Dataflow)",
+    "Kafka",
+    "Docker"
+  ],
+  "brief_summary": "Data Engineer with 3+ years building scalable batch and streaming pipelines. Experienced in architecting end-to-end data infrastructure from ingestion to analytics-ready layers.",
+  "email": "sumitbhosale1998@outlook.com",
+  "linkedin": "",
+  "portfolio": ""
+}
