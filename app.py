@@ -127,7 +127,7 @@ SMTP_PROVIDERS = {
         "password": "GMAIL_APP_PASSWORD",
     },
     "outlook": {
-        "host":     "smtp-mail.outlook.com",
+        "host":     "smtp.office365.com",
         "port":     587,
         "use_ssl":  False,
         "address":  "OUTLOOK_ADDRESS",
