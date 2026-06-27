@@ -25,7 +25,8 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-gemini   = genai.GenerativeModel("gemini-3.5-flash")
+# gemini   = genai.GenerativeModel("gemini-3.5-flash")
+gemini   = genai.GenerativeModel("gemini-2.5-flash")
 twilio   = TwilioClient(os.getenv("TWILIO_ACCOUNT_SID"), os.getenv("TWILIO_AUTH_TOKEN"))
 WA_FROM  = os.getenv("TWILIO_WHATSAPP_NUMBER", "whatsapp:+14155238886")
 
